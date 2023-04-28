@@ -16,23 +16,27 @@ from parse_data_v2_1 import Mouse_data
 from parse_data_v2_1 import pickle_dict
 from parse_data_v2_1 import load_pickleddata
 
-mouse_id = ['S3_patched_together','S2_patched_together']
+#mouse_id = ['K3_good','K2_good','K1_good']
+#mouse_id = ['K3_day1', 'K2_day1', 'K1_day1']
+mouse_id = ['testing']
 mouse_dataframes = {}
 
 for mouse_name in mouse_id:
     print(mouse_name)
 
-    path = 'G:/My Drive/behavior data/experiment_data_2022_3_cheat_go_no/parsed_dataframe_pickle'
+    path = '/Volumes/GoogleDrive//My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay/parsed_dataframe_pickle'
     filepath = os.path.join(path, '{}_stats.pickle'.format(mouse_name))
     data = load_pickleddata(filepath)
-    counter = {'cheat_go_no': 0}
+    #counter = {'MixTypes2': 0, 'MixTypes3': 1, 'MixTypes4 : '}
+    counter = {'MixTypes4': 0, 'MixTypes3': 1}   #need to count days for each or switch so just day based
+
     training_types = data.training_type
     print(training_types)
     for index, key in enumerate(data.df_trials):
 
         data_trials = data.df_trials[key]
-        data_trials_iscorrect = data.df_trials_iscorrect[key].drop(columns=['trialtype'], axis=1)
-        data_trials_lick = data.df_trials_lick[key].drop(columns=['trialtype'], axis=1)
+        data_trials_iscorrect = data.df_trials_iscorrect[key].drop(columns=['odormix'], axis=1)
+        data_trials_lick = data.df_trials_lick[key].drop(columns=['odormix'], axis=1)
         step1 = pd.concat([data_trials, data_trials_iscorrect, data_trials_lick], axis=1, sort=False)
 
         training_type = training_types[index]
@@ -40,10 +44,13 @@ for mouse_name in mouse_id:
         #step1['group'] = mouse_group[mouse_name]
         counter[training_type] += 1
         step1['session'] = counter[training_type]
+        #step1['dilution'] = training_type
+
         step1['trialnumber'] = step1.index + 1
         #step1['is_imaging'] = len(re.findall('-', mouse_name))
         step1['mouse_name'] = mouse_name
-        step1['phase'] = 1
+        #step1['phase'] = 1
+        #step1['phase'] = 'pre'
         if index < 1:
             df_this_mouse = pd.DataFrame(step1)
         else:
@@ -53,7 +60,9 @@ for mouse_name in mouse_id:
 # %%
 from datetime import date
 
-version = date.today()
+#version = date.today()
+#version = 'E_Threshold'
+version = 'learning'
 
 df_list = []
 for key, value in mouse_dataframes.items():

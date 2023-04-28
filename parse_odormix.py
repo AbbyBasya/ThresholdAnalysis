@@ -27,6 +27,7 @@ class Mouse_data:
         self.training_type = []
         self.df_trials = {}
         self.trialtypes = []
+        self.odormix = []
         self.df_trials_iscorrect = {}
         self.df_trials_lick = {}
         self.df_eventcode = {}
@@ -40,7 +41,7 @@ class Mouse_data:
         self.odor_bef = 3.2
         self.odor_on = 1.5
         self.delay = 1
-        self.rew_after = 4
+        self.rew_after = 2
 
     def read_filename(self):
         filedir = self.filedir + '/{}'.format(self.mouse_id)
@@ -76,10 +77,14 @@ class Mouse_data:
             date_list.append(date)  # create a list of emperiment date
 
             train_type = os.path.split(file)[-1][16:-5]
+            # dilution = os.path.split(file)[-1][24:-5]
+            #dilution = os.path.split(file)[-1][32:-5]
+
             training_type.append(train_type)  ###
+            # training_type.append(dilution)
 
             data = pd.read_excel(file, header=0 if original else None)  # read orginal csv data
-            data.columns = ['Time', 'Event', 'Type']  # rename columns
+            data.columns = ['Time', 'Event', 'Type', 'Mix']  # rename columns
 
             df.update({date: data})  # create the dict of key: date and value: data dataframe
         self.df_eventcode = df  # individual mouse event code data
@@ -101,10 +106,12 @@ class Mouse_data:
 
     def generate_trials_dataframe(self, index, ori_df):
 
-        lick, trialtype, go_odor, nogo_odor, control_odor, water_on, water_off, trial_end = self.seperate_events(index,
-                                                                                                                 ori_df)
-        d = {'trialtype': trialtype, 'go_odor': go_odor, 'nogo_odor': nogo_odor, 'control_odor': control_odor,
-             'water_on': water_on, 'water_off': water_off, 'licking': lick,
+        lick, trialtype, odormix, go_odor, nogo_odor, control_odor, water_on, water_off, airpuff_on, airpuff_off, trial_end = self.seperate_events(
+            index,
+            ori_df)
+        d = {'trialtype' : trialtype, 'odormix': odormix, 'go_odor': go_odor, 'nogo_odor': nogo_odor,
+             'control_odor': control_odor,
+             'water_on': water_on, 'water_off': water_off, 'airpuff_on':airpuff_on , 'airpuff_off': airpuff_off ,'licking': lick,
              'trial_end': trial_end}
         df_trial = pd.DataFrame(data=d)
         return df_trial
@@ -114,11 +121,14 @@ class Mouse_data:
         start_trials = 0
         lick = []
         trialtype = []
+        odormix = []
         go_odor = []
         nogo_odor = []
         control_odor = []
         water_on = []
         water_off = []
+        airpuff_on = []
+        airpuff_off = []
         trial_end = []
         print(index_day)
 
@@ -135,14 +145,57 @@ class Mouse_data:
 
                 temp_water_on = np.nan
                 temp_water_off = np.nan
+
+                temp_airpuff_on = np.nan
+                temp_airpuff_off = np.nan
                 temp_trial_end = np.nan
 
-                if row['Type'] == 'trial0':
-                    trialtype.append('go')
-                elif row['Type'] == 'trial1':
+                if row['Type'] == 'trial1':
                     trialtype.append('no_go')
-                elif row['Type'] == 'trial7':
-                    trialtype.append('go_blank_cheat')
+                    if row['Mix'] == 'punish_mix81':
+                        odormix.append('8:1 No')
+                    elif row['Mix'] == 'punish_mix80':
+                        odormix.append('8:0 No')
+                    elif row['Mix'] == 'punish_mix63':
+                        odormix.append('6:3 No')
+                    elif row['Mix'] == 'punish_mix72':
+                        odormix.append('7:2 No')
+                    elif row['Mix'] == 'mix81':
+                        odormix.append('8:1 No')
+                    elif row['Mix'] == 'mix63':
+                        odormix.append('6:3 No')
+                    elif row['Mix'] == 'mix72':
+                        odormix.append('7:2 No')
+                    elif row['Mix'] == 'mix54':
+                        odormix.append('5:4 No')
+                    elif row['Mix'] == 'mix51':
+                        odormix.append('5:1 No')
+
+                elif row['Type'] == 'trial0':
+                    trialtype.append('go')
+                    if row['Mix'] == 'reward_mix81':
+                        odormix.append('1:8 Go')
+                    elif row['Mix'] == 'reward_mix80':
+                        odormix.append('0:8 Go')
+                    elif row['Mix'] == 'reward_mix63':
+                        odormix.append('3:6 Go')
+                    elif row['Mix'] == 'reward_mix72':
+                        odormix.append('2:7 Go')
+                    elif row['Mix'] == 'mix81':
+                        odormix.append('1:8 Go')
+                    elif row['Mix'] == 'mix63':
+                        odormix.append('3:6 Go')
+                    elif row['Mix'] == 'mix72':
+                        odormix.append('2:7 Go')
+                    elif row['Mix'] == 'mix54':
+                        odormix.append('4:5 Go')
+                    elif row['Mix'] == 'mix51':
+                        odormix.append('1:5 Go')
+                #if row['Type'] == 'trial7':
+                #    trialtype.append('go_blank_cheat')
+
+
+
 
 
             elif row['Event'] == 11:
@@ -172,6 +225,12 @@ class Mouse_data:
             elif row['Event'] == 50:
                 temp_water_off = row['Time'] - start_trials
 
+            elif row['Event'] ==666:  # airpuff on
+                temp_water_on = row['Time'] - start_trials
+
+            elif row['Event'] == 667:   #airpuff off
+                temp_water_off = row['Time'] - start_trials
+
             elif row['Event'] == 100:  # trial end
                 temp_trial_end = row['Time'] - start_trials
 
@@ -182,16 +241,20 @@ class Mouse_data:
                 control_odor.append([temp_control_odor_on, temp_control_odor_off])
                 water_on.append(temp_water_on)
                 water_off.append(temp_water_off)
+                airpuff_on.append(temp_airpuff_on)
+                airpuff_off.append(temp_airpuff_off)
                 trial_end.append(temp_trial_end)
 
-        return lick, trialtype, go_odor, nogo_odor, control_odor, water_on, water_off, trial_end
+        return lick, trialtype, odormix, go_odor, nogo_odor, control_odor, water_on, water_off, airpuff_on, airpuff_off, trial_end
 
     def create_trial_iscorrect(
             self):  # create dataframe with trial number, correct or rewarded or not only for conditioning period
         for index, date in enumerate(self.all_days):
             value = self.df_trials[date]
             new_df = self.eval_trials_correct(value)
-            new_df.insert(0, 'trialtype', value['trialtype'])
+            #new_df.insert(0, 'trialtype', value['trialtype'])
+            new_df.insert(0, 'odormix', value['odormix'])
+            #new_df.insert(0, 'trialtype', value['trialtype'])#
             self.df_trials_iscorrect[date] = new_df
             print('create_trial_iscorrect done!')
 
@@ -199,6 +262,7 @@ class Mouse_data:
 
         is_correct = []
         is_rewarded = []
+
         for index, row in df.iterrows():
             if row['trialtype'] == 'go':
                 is_rewarded.append(1)
@@ -215,6 +279,24 @@ class Mouse_data:
                     is_correct.append(0)
                 else:
                     is_correct.append(1)
+
+
+        # for index, row in df.iterrows():
+            # if row['odormix'] == '1:8 Go'or '2:7 Go' or '3:6 Go':
+            #     is_rewarded.append(1)
+            #     # if any(x > row['go_odor'][0] and x < row['go_odor'][1] + self.delay for x in row['licking']):
+            #     if any(x > row['go_odor'][1] and x < row['go_odor'][1] + self.delay for x in row['licking']):
+            #         is_correct.append(1)
+            #     else:
+            #         is_correct.append(0)
+            #
+            # elif row['odormix'] == '8:1 No' or '7:2 No' or '6:3 No':
+            #     is_rewarded.append(0)
+            #     # if any(x > row['nogo_odor'][0] and x < row['nogo_odor'][1] + self.delay for x in row['licking']):
+            #     if any(x > row['nogo_odor'][1] and x < row['nogo_odor'][1] + self.delay for x in row['licking']):
+            #         is_correct.append(0)
+            #     else:
+            #         is_correct.append(1)
 
             elif row['trialtype'] == 'go_blank_cheat':
                 is_rewarded.append(1)
@@ -262,7 +344,9 @@ class Mouse_data:
         for index, date in enumerate(self.all_days):
             value = self.df_trials[date]
             new_df = self.lick_stats(value)
-            new_df.insert(0, 'trialtype', value['trialtype'])
+            #new_df.insert(0, 'trialtype', value['trialtype'])
+            new_df.insert(0, 'odormix', value['odormix'])
+
             self.df_trials_lick[date] = new_df
             print('lick stats done!')
 
@@ -280,14 +364,15 @@ class Mouse_data:
         anti_window = self.odor_on + self.delay
         lick_anti_list = []
         lick_aftr_list = []
-        for index, row in df.iterrows():
-            if row['trialtype'] in ['go', 'go_omit', 'go_blank_cheat']:
 
-                lick_valid = [x for x in row['licking'] if x > row['go_odor'][1] and x < row['go_odor'][
+        for index, row in df.iterrows():
+            if row['trialtype'] in ['go']:
+
+                lick_valid = [x for x in row['licking'] if x > row['go_odor'][0] and x < row['go_odor'][
                     1] + tol_interval]  # valid licking: after odor on and 5.5 s after odor off
                 # lickingrate for anticipitory period and after water period 3.5 respectively
                 anti = [i for i in row['licking'] if
-                        i > row['go_odor'][1] and i < row['go_odor'][1] + self.delay]  # anticipitory
+                        i > row['go_odor'][0] and i < row['go_odor'][1] + self.delay]  # anticipitory
                 aftr = [i for i in row['licking'] if
                         i > row['water_on'] and i < row['water_off'] + self.rew_after]  # after water
                 rate_anti = len(anti) / anti_window
@@ -295,11 +380,11 @@ class Mouse_data:
                 # num of licking
                 num = len(lick_valid)
                 if num != 0:
-                    latency_odor = min(lick_valid) - row['go_odor'][1]  # first licking after odor delivery on
+                    latency_odor = min(lick_valid) - row['go_odor'][0]  # first licking after odor delivery on
                 else:
-                    latency_odor = tol_interval
+                    latency_odor = np.nan
 
-                if row['trialtype'] == 'go':
+                if row['trialtype'] in ['go']:
                     if len(aftr) != 0:
                         latency_rew = min(aftr) - row['water_on']  # first licking after odor delivery on
                     else:
@@ -311,21 +396,22 @@ class Mouse_data:
                 except:
                     duration = np.nan
 
-            elif row['trialtype'] == 'no_go':
-                lick_valid = [x for x in row['licking'] if x > row['nogo_odor'][1] and x < row['nogo_odor'][
+            elif row['trialtype'] in ['no_go']:
+                lick_valid = [x for x in row['licking'] if x > row['nogo_odor'][0] and x < row['nogo_odor'][
                     1] + tol_interval]  # valid licking: after odor on and 5.5 s after odor off
                 # inter-licking interval for anticipitory period and after water period
                 anti = [i for i in row['licking'] if
-                        i > row['nogo_odor'][1] and i < row['nogo_odor'][1] + self.delay]  # anticipitory
+                        i > row['nogo_odor'][0] and i < row['nogo_odor'][1] + self.delay]  # anticipitory
                 aftr = []
                 rate_anti = len(anti) / anti_window
                 rate_aftr = np.nan
                 # num of licking
                 num = len(lick_valid)
                 if num != 0:
-                    latency_odor = min(lick_valid) - row['nogo_odor'][1]  # first licking after odor delivery on
+                    latency_odor = min(lick_valid) - row['nogo_odor'][0]  # first licking after odor delivery on
                 else:
-                    latency_odor = tol_interval
+                    # latency_odor = tol_interval
+                    latency_odor = np.nan
                 latency_rew = np.nan
                 try:
                     duration = max(anti) - min(anti)  # anticipitory licking duration after odor presentation
@@ -333,21 +419,6 @@ class Mouse_data:
                     duration = np.nan
 
 
-
-
-
-            elif row['trialtype'] == 'background':
-                lick_valid = [x for x in row['licking'] if
-                              x > 0 and x < row['trial_end']]  # valid licking: after odor on and 5.5 s after odor off
-                intvl = row['trial_end']
-                anti = lick_valid
-                aftr = []
-                rate_anti = len(anti) / intvl
-                rate_aftr = np.nan
-                num = len(lick_valid)
-                latency_odor = np.nan
-                latency_rew = np.nan
-                duration = np.nan  # licking duration after water delivery
 
             lick_num.append(num)
             lick_rate.append(num / tol_interval)
@@ -436,10 +507,11 @@ if __name__ == '__main__':
     # ********************
     load_path = '/Volumes/GoogleDrive/My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay'
 
-    # load file
-    # mouse_names = ['C50','C52','C53','C54']
+    mouse_names = ['testing']
+    #mouse_names = ['K3_day5','K2_day5','K1_day5']
 
-    mouse_names = ['K1_good']
+
+
     for mouse_name in mouse_names:
         cute = Mouse_data(mouse_name, filedir=load_path)
         cute.read_filename()
@@ -462,10 +534,44 @@ if __name__ == '__main__':
             save_path_excel = load_path + '/parsed_dataframe_spreadsheet'
 
             save_to_excel(cute.df_trials_iscorrect, save_path_excel, '{}_trial_iscorrect'.format(cute.mouse_id))
+            # save_to_excel(cute.df_trials_, save_path_excel, '{}_trial_lick_latency'.format(cute.mouse_id))
             save_to_excel(cute.df_trials_lick, save_path_excel, '{}_lick_stat'.format(cute.mouse_id))
             save_to_excel(cute.df_trials, save_path_excel, '{}_trials'.format(cute.mouse_id))
             save_to_excel(cute.df_eventcode, save_path_excel, '{}_eventcode'.format(cute.mouse_id))
         # %% main code
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

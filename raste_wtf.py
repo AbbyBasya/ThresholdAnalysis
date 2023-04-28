@@ -49,8 +49,7 @@ def event_plot(df, save_dir, mouse_id='', exp_date='', filename='test', save=Fal
         plt.hlines(i, 0, row['trial_end'], color='grey', alpha=0.2,linewidth=width)
 
 
-        #plt.eventplot(df.licking, colors=lickcolor, lineoffsets=lineoffsets2, linelengths=linelengths2, alpha=0.5,
-                      #label='licking')
+
 
 
 
@@ -58,18 +57,18 @@ def event_plot(df, save_dir, mouse_id='', exp_date='', filename='test', save=Fal
                 #  label='licking')
 
 
-    ax = plt.subplot(111)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    draw_loc = ax.get_xlim()[1]
-    draw_loc2 = ax.get_ylim()[1]
+    # ax = plt.subplot(111)
+    # ax.spines["top"].set_visible(False)
+    # ax.spines["right"].set_visible(False)
+    # draw_loc = ax.get_xlim()[1]
+    # draw_loc2 = ax.get_ylim()[1]
     # create is correct
-    try:
+  #  try:
 
-        for i in range(len(df.index)):
+        #for i in range(len(df.index)):
             # try:
-            appear1 = 0
-            appear2 = 0
+           # appear1 = 0
+            #appear2 = 0
             #if df['trialtype'][i] in ['go', 'go_omit', 'go_blank_cheat', 'c_omit']:
                 #position = 1
             #elif df['trialtype'][i] in ['no_go', 'background']:
@@ -86,38 +85,38 @@ def event_plot(df, save_dir, mouse_id='', exp_date='', filename='test', save=Fal
             # except:
             #    print("--------is_Correct data hasn't been merged ---------")
         # plt.xticks(fontsize=14)
-        ax.set_xlim([ax.get_xlim()[0], draw_loc + 4])
-    except:
-        pass
-
-    ax.get_xaxis().tick_bottom()
-
-    ax.get_yaxis().tick_left()
-    plt.tick_params(axis="both", which="both", bottom=False, left=False, top=False, right=False,
-                    labelbottom="on", labelleft="on", labelsize=14)
-    plt.ylabel('Trials', fontsize=18)
-    plt.xlabel('Time(s)', fontsize=18)
-    ax.set_ylim(bottom=-1, ymax=len(df.index))
-    ax.set_xlim(left=-0.2)
-
-    plt.text(draw_loc + 0.8, draw_loc2 - 3, 'hit', fontsize=14)
+    #     ax.set_xlim([ax.get_xlim()[0], draw_loc + 4])
+    # except:
+    #     pass
+    #
+    # ax.get_xaxis().tick_bottom()
+    #
+    # ax.get_yaxis().tick_left()
+    # plt.tick_params(axis="both", which="both", bottom=False, left=False, top=False, right=False,
+    #                 labelbottom="on", labelleft="on", labelsize=14)
+    # plt.ylabel('Trials', fontsize=18)
+    # plt.xlabel('Time(s)', fontsize=18)
+    # ax.set_ylim(bottom=-1, ymax=len(df.index))
+    # ax.set_xlim(left=-0.2)
+    #
+    # plt.text(draw_loc + 0.8, draw_loc2 - 3, 'hit', fontsize=14)
     #plt.text(draw_loc + 1.6, draw_loc2 - 3, 'rejection', fontsize=14)
 
     #handles, labels = plt.gca().get_legend_handles_labels()
     #by_label = OrderedDict(zip(labels, handles))
     #plt.legend(by_label.values(), by_label.keys(), prop={'size': 14}, loc='upper center', bbox_to_anchor=(0.5, 1.07),
        #        frameon=False, fancybox=False, shadow=False, ncol=3)
-    datetime.now().strftime("%Y-%m-%d-%H-%M")
-    plt.suptitle('{} eventplot on {}'.format(mouse_id, exp_date), fontsize=20, y=0.96)
-    if save:
-        try:
-            savepath = "{1}/{0}/{2}".format(mouse_id, save_dir, date.today())
-            os.makedirs(savepath)
-        except:
-            pass
-        figure.set_size_inches(figuresize[0], figuresize[1])
+    #datetime.now().strftime("%Y-%m-%d-%H-%M")
+    #plt.suptitle('{} eventplot on {}'.format(mouse_id, exp_date), fontsize=20, y=0.96)
+    #if save:
+     #   try:
+      #      savepath = "{1}/{0}/{2}".format(mouse_id, save_dir, date.today())
+       #     os.makedirs(savepath)
+       # except:
+        #    pass
+        #figure.set_size_inches(figuresize[0], figuresize[1])
 
-        plt.savefig("{0}/{1}_{2}.png".format(savepath, exp_date, filename), bbox_inches="tight", dpi=100)
+        #plt.savefig("{0}/{1}_{2}.png".format(savepath, exp_date, filename), bbox_inches="tight", dpi=100)
 
         #    print('error while saving')
 
@@ -140,7 +139,7 @@ for mouse_id in mouse_names:
 
     # assign two df
     mouse_trials = mouse.df_trials
-    mouse_iscorrect = mouse.df_trials_iscorrect
+    #mouse_iscorrect = mouse.df_trials_iscorrect
     # choose a date
     all_days = mouse.all_days
     print('-----------------------------------------------------------')
@@ -152,11 +151,11 @@ for mouse_id in mouse_names:
         save_dir = os.path.join(path, 'figures')
         # concatenate data
         merge_trials_iscorrect = mouse_trials[day].copy()  # need to be hard copy
-        try:  # for condition days
-            merge_trials_iscorrect['is_Correct'] = mouse_iscorrect[day][
-                'is_Correct']  # join df_trials and df_isccorect serial
-        except:  # degradation days don't have is_correct
-            pass
+        #try:  # for condition days
+            #merge_trials_iscorrect['is_Correct'] = mouse_iscorrect[day][
+                #'is_Correct']  # join df_trials and df_isccorect serial
+        #except:  # degradation days don't have is_correct
+         #   pass
         # plot
         figure = event_plot(merge_trials_iscorrect, mouse_id=mouse.mouse_id, exp_date=day, filename='all_trials',
                             save=True, save_dir=save_dir)
