@@ -20,7 +20,7 @@ from parse_data_v2_1 import load_pickleddata
 
 
 #path = '/Volumes/GoogleDrive/My Drive/behavior data/experiment_data_2022_3_odor go_no-go_no_delay/parsed_dataframe_pickle'
-path = '/Volumes/GoogleDrive/My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay/parsed_dataframe_pickle'
+path = 'H:/My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay/parsed_dataframe_pickle'
 
 #females = os.path.join(path,'combined_all_clean_G_females.pickle')
 #males = os.path.join(path,'combined_all_clean_G_males.pickle')
@@ -60,10 +60,10 @@ g.index.duplicated()
 
 
 y = 'is_Correct'
-#y= 'rate_antici'
+#y= 'rate_odor'
+#y='rate_window'
 #y = 'latency_to_odor'
 #x = 'session'
-#x = 'dilution'
 x = 'odormix'
 
 values = ['', 'day1', 'day2', 'day3', 'day4']
@@ -79,7 +79,7 @@ values = ['', 'day1', 'day2', 'day3', 'day4']
 # social_post = social_post[(social_post['trialtype'].isin(['go','no_go']))]
 #f = f[(f['trialtype'].isin(['go','no_go']))]
 #m = m[(m['trialtype'].isin(['go','no_go']))]
-g = g[(g['trialtype'].isin(['no_go', 'go']))]
+g = g[(g['trialtype'].isin(['no_go','go']))]
 # cold_test = post_data[(post_data['dilution'].isin(['6']))]
 
 #data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','phase'])[y].mean().reset_index()
@@ -118,18 +118,21 @@ g = g.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
 #leg_lines[4].set_linestyle(":")
 
 #plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="odormix", ci=68, err_style='bars')
-#plot = sns.barplot(data = g,x = x,y = y, marker = "o", hue="odormix", ci=68, err_style='bars', hue_order = ('8:0 Go' ,'1:8 Go', '2:7 Go', '3:6 Go', '6:3 No', '7:2 No', '8:1 No', '8:0 No'))
+#plot = sns.barplot(data = g,x = x,y = y, marker = "o", hue="odormix#", ci=68, err_style='bars', hue_order = ('8:0 Go' ,'1:8 Go', '2:7 Go', '3:6 Go', '6:3 No', '7:2 No', '8:1 No', '8:0 No'))
 #
 # g['odormix'] = pd.Categorical(g['odormix'],
 #                                     categories=['8:0 Go','1:8 Go', '2:7 Go', '3:6 Go', '4:5 Go', '5:4 No', '6:3 No', '7:2 No', '8:1 No', '8:0 No'],
 #                                     ordered=True)
 
 g['odormix'] = pd.Categorical(g['odormix'],
-                                    categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
+                                    categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '6:6 Go', '6:6 No', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
                                     ordered=True)
 
 #plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="odormix", ci=68, err_style='bars', legend = True)
-plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="odormix", legend = True)
+plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend = True, palette=['g','r','g','r'])
+
+#plot = sns.lineplot(data = g,x = x,y = y, marker = "o")
+
 
 
 #plot = sns.lineplot(data = g,x = x,y = y, marker = "o")
