@@ -13,7 +13,7 @@ import matplotlib as mpl
 import re
 import csv
 import pickle
-
+import xlsxwriter
 
 # %%
 class Mouse_data:
@@ -170,6 +170,8 @@ class Mouse_data:
                         odormix.append('5:4 No')
                     elif row['Mix'] == 'mix51':
                         odormix.append('5:1 No')
+                    elif row['Mix'] == 'mix66':
+                        odormix.append('6:6 No')
 
                 elif row['Type'] == 'trial0':
                     trialtype.append('go')
@@ -191,6 +193,9 @@ class Mouse_data:
                         odormix.append('4:5 Go')
                     elif row['Mix'] == 'mix51':
                         odormix.append('1:5 Go')
+                    elif row['Mix'] == 'mix66':
+                        odormix.append('6:6 Go')
+
                 #if row['Type'] == 'trial7':
                 #    trialtype.append('go_blank_cheat')
 
@@ -357,12 +362,14 @@ class Mouse_data:
         lick_latent_odor = []
         lick_latent_rew = []
         lick_duration = []
-        lick_rate_anti = []
+        lick_rate_window = []
+        lick_rate_odor = []
         lick_rate_aftr = []
         # proportion_correct = []
         tol_interval = self.odor_on + self.delay + self.rew_after
         anti_window = self.odor_on + self.delay
-        lick_anti_list = []
+        lick_window_list = []
+        lick_odor_list = []
         lick_aftr_list = []
 
         for index, row in df.iterrows():
@@ -371,12 +378,14 @@ class Mouse_data:
                 lick_valid = [x for x in row['licking'] if x > row['go_odor'][0] and x < row['go_odor'][
                     1] + tol_interval]  # valid licking: after odor on and 5.5 s after odor off
                 # lickingrate for anticipitory period and after water period 3.5 respectively
-                anti = [i for i in row['licking'] if
-                        i > row['go_odor'][0] and i < row['go_odor'][1] + self.delay]  # anticipitory
+                during_odor = [i for i in row['licking'] if
+                        i > row['go_odor'][0] and i < row['go_odor'][1]]  
+                during_window = [i for i in row['licking'] if
+                        i > row['go_odor'][1] and i < row['go_odor'][1] + self.delay]  
                 aftr = [i for i in row['licking'] if
                         i > row['water_on'] and i < row['water_off'] + self.rew_after]  # after water
-                rate_anti = len(anti) / anti_window
-                rate_aftr = len(aftr) / self.rew_after
+                rate_odor = len(during_odor) / self.odor_on
+                rate_window = len(during_window) / self.delay
                 # num of licking
                 num = len(lick_valid)
                 if num != 0:
@@ -392,7 +401,7 @@ class Mouse_data:
                 else:
                     latency_rew = np.nan
                 try:
-                    duration = max(anti) - min(anti)  # anticipitory licking duration after odor presentation
+                    duration = max(during_window) - min(during_window)  # anticipitory licking duration after odor presentation
                 except:
                     duration = np.nan
 
@@ -400,12 +409,14 @@ class Mouse_data:
                 lick_valid = [x for x in row['licking'] if x > row['nogo_odor'][0] and x < row['nogo_odor'][
                     1] + tol_interval]  # valid licking: after odor on and 5.5 s after odor off
                 # inter-licking interval for anticipitory period and after water period
-                anti = [i for i in row['licking'] if
-                        i > row['nogo_odor'][0] and i < row['nogo_odor'][1] + self.delay]  # anticipitory
-                aftr = []
-                rate_anti = len(anti) / anti_window
-                rate_aftr = np.nan
-                # num of licking
+                during_odor = [i for i in row['licking'] if
+                        i > row['nogo_odor'][0] and i < row['nogo_odor'][1]]  
+                during_window = [i for i in row['licking'] if
+                        i > row['nogo_odor'][1] and i < row['nogo_odor'][1] + self.delay]  
+                rate_odor = len(during_odor) / self.odor_on
+                rate_window = len(during_window) / self.delay
+                aftr = [i for i in row['licking'] if
+                        i > row['water_on'] and i < row['water_off'] + self.rew_after]  # after water# num of licking
                 num = len(lick_valid)
                 if num != 0:
                     latency_odor = min(lick_valid) - row['nogo_odor'][0]  # first licking after odor delivery on
@@ -414,7 +425,7 @@ class Mouse_data:
                     latency_odor = np.nan
                 latency_rew = np.nan
                 try:
-                    duration = max(anti) - min(anti)  # anticipitory licking duration after odor presentation
+                    duration = max(during_window) - min(during_window)  # anticipitory licking duration after odor presentation
                 except:
                     duration = np.nan
 
@@ -425,9 +436,11 @@ class Mouse_data:
             lick_latent_odor.append(latency_odor)
             lick_latent_rew.append(latency_rew)
             lick_duration.append(duration)
-            lick_rate_anti.append(rate_anti)
-            lick_rate_aftr.append(rate_aftr)
-            lick_anti_list.append(anti)
+            lick_rate_window.append(rate_window)
+            lick_rate_aftr.append(lick_rate_aftr)
+            lick_rate_odor.append(rate_odor)
+            lick_window_list.append(during_window)
+            lick_odor_list.append(during_odor)
             lick_aftr_list.append(aftr)
 
         d = {'lick_num_whole_trial': lick_num,
@@ -435,10 +448,11 @@ class Mouse_data:
              'latency_to_odor': lick_latent_odor,
              'latency_to_rew': lick_latent_rew,
              'anti_duration': lick_duration,
-             'rate_antici': lick_rate_anti,
+             'rate_window': lick_rate_window,
+             'rate_odor' : lick_rate_odor,
              'rate_after': lick_rate_aftr,
-             'anti_lick': lick_anti_list,
-             'aftr_lick': lick_aftr_list
+             'window_lick': lick_window_list,
+             'odor_lick': lick_odor_list
              }
         new_df = pd.DataFrame(d)
         return new_df
@@ -505,9 +519,9 @@ if __name__ == '__main__':
     is_original = True  # when use clean data, change it to False
 
     # ********************
-    load_path = '/Volumes/GoogleDrive/My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay'
+    load_path = 'H:/My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay'
 
-    mouse_names = ['testing']
+    mouse_names = ['test']
     #mouse_names = ['K3_day5','K2_day5','K1_day5']
 
 
