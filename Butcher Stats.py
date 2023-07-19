@@ -20,7 +20,7 @@ from parse_data_v2_1 import load_pickleddata
 
 
 #path = '/Volumes/GoogleDrive/My Drive/behavior data/experiment_data_2022_3_odor go_no-go_no_delay/parsed_dataframe_pickle'
-path = 'H:/My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay/parsed_dataframe_pickle'
+path = 'F:/My Drive/behavior data/valence_task_2023_go_no_66/parsed_dataframe_pickle'
 
 #females = os.path.join(path,'combined_all_clean_G_females.pickle')
 #males = os.path.join(path,'combined_all_clean_G_males.pickle')
@@ -59,9 +59,10 @@ g = load_pickleddata(g)
 g.index.duplicated()
 
 
-y = 'is_Correct'
+#y = 'licked'
+#y = 'is_Correct'
 #y= 'rate_odor'
-#y='rate_window'
+y='rate_window'
 #y = 'latency_to_odor'
 #x = 'session'
 x = 'odormix'
@@ -93,6 +94,7 @@ g = g[(g['trialtype'].isin(['no_go','go']))]
 #g = g.groupby(['mouse_name'])[y].mean().reset_index()
 
 g = g.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
+#g = g.groupby(['mouse_name','session'])[y].mean().reset_index()
 
 
 # cold_test= cold_test.groupby(['mouse_name'])[y].mean().reset_index()
@@ -110,8 +112,6 @@ g = g.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
 #plot = sns.boxplot(data = data_pre, column= '5', x = 5,y = y)
 #plt.scatter(x=5, y=y)
 
-#print(data_post)
-#data_post = data_post.reindex(columns=['Name', 'Gender', 'Age', 'City', 'Education'])
 
 #leg = plot.legend()
 #leg_lines = leg.get_lines()
@@ -125,11 +125,16 @@ g = g.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
 #                                     ordered=True)
 
 g['odormix'] = pd.Categorical(g['odormix'],
-                                    categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '6:6 Go', '6:6 No', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
+                                    categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '4:5 Go', '6:6', '5:4 No', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
                                     ordered=True)
 
 #plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="odormix", ci=68, err_style='bars', legend = True)
-plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend = True, palette=['g','r','g','r'])
+
+#color = (sns.set_palette("bright")
+
+#plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend = True, palette = sns.color_palette('bright', as_cmap=True))
+plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend = True, palette = ['g','r','g','r','r','r'])
+
 
 #plot = sns.lineplot(data = g,x = x,y = y, marker = "o")
 
@@ -190,7 +195,8 @@ plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend =
 #sns.lineplot(data = data_deg_cond,x = x,y = y, marker="o")
 
 plt.locator_params(axis="x", integer=True, tight=True)
-#plot.yaxis.set_ticks(np.arange(0.4, 1, 0.05))
+
+#plot.yaxis.set_ticks(np.arange(0, 1.05, 0.05))
 
 
 #sns.move_legend(plot, "upper left", bbox_to_anchor=(1, 1))

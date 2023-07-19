@@ -18,17 +18,17 @@ from parse_data_v2_1 import load_pickleddata
 
 #mouse_id = ['K3_good','K2_good','K1_good']
 #mouse_id = ['K3_day1', 'K2_day1', 'K1_day1']
-mouse_id = ['test']
+mouse_id = ['M3_post_iso']
 mouse_dataframes = {}
 
 for mouse_name in mouse_id:
     print(mouse_name)
 
-    path = 'H:/My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay/parsed_dataframe_pickle'
+    path = 'F:/My Drive/behavior data/valence_task_2023_go_no_66/parsed_dataframe_pickle'
     filepath = os.path.join(path, '{}_stats.pickle'.format(mouse_name))
     data = load_pickleddata(filepath)
-    #counter = {'MixTypes2': 0, 'MixTypes4': 1}
-    counter = {'MixTypes4': 0, 'MixTypes3': 1}   #need to count days for each or switch so just day based
+    counter = {'MixTypes1' :0, 'MixTypes2': 0, 'MixTypes4': 1, 'MixTypes3': 1}
+    #counter = {'MixTypes4': 0, 'MixTypes3': 1}   #need to count days for each or switch so just day based
 
     training_types = data.training_type
     print(training_types)
