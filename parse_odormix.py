@@ -77,11 +77,9 @@ class Mouse_data:
             date_list.append(date)  # create a list of emperiment date
 
             train_type = os.path.split(file)[-1][16:-5]
-            # dilution = os.path.split(file)[-1][24:-5]
-            #dilution = os.path.split(file)[-1][32:-5]
+
 
             training_type.append(train_type)  ###
-            # training_type.append(dilution)
 
             data = pd.read_excel(file, header=0 if original else None)  # read orginal csv data
             data.columns = ['Time', 'Event', 'Type', 'Mix']  # rename columns
@@ -163,20 +161,19 @@ class Mouse_data:
                     elif row['Mix'] == 'mix80':
                         odormix.append('8:0 No')
                     elif row['Mix'] == 'mix81':
-                        odormix.append('8:1 No')
+                        odormix.append('0.88')
                     elif row['Mix'] == 'mix63':
-                        odormix.append('6:3 No')
+                        odormix.append('0.66')
                     elif row['Mix'] == 'mix72':
-                        odormix.append('7:2 No')
+                        odormix.append('0.77')
                     elif row['Mix'] == 'mix54':
                         odormix.append('5:4 No')
                     elif row['Mix'] == 'mix51':
-                        odormix.append('5:1 No')
+                        odormix.append('0.83')
                     elif row['Mix'] == 'mix66':
-                        odormix.append('6:6 No')
-                    elif row['Mix'] == 'mix54':
-                        odormix.append('5:4 No')
+                        odormix.append('0.5')
 
+                
                 elif row['Type'] == 'trial0':
                     trialtype.append('go')
                     if row['Mix'] == 'reward_mix81':
@@ -190,26 +187,26 @@ class Mouse_data:
                     elif row['Mix'] == 'mix80':
                         odormix.append('0:8 Go')
                     elif row['Mix'] == 'mix81':
-                        odormix.append('1:8 Go')
+                        odormix.append('0.11')
                     elif row['Mix'] == 'mix63':
-                        odormix.append('3:6 Go')
+                        odormix.append('0.33')
                     elif row['Mix'] == 'mix72':
-                        odormix.append('2:7 Go')
+                        odormix.append('0.22')
                     elif row['Mix'] == 'mix54':
                         odormix.append('4:5 Go')
                     elif row['Mix'] == 'mix51':
-                        odormix.append('1:5 Go')
+                        odormix.append('0.166')
                     elif row['Mix'] == 'mix66':
-                        odormix.append('6:6')
+                        odormix.append('0.5')
                     elif row['Mix'] == 'mix54':
                         odormix.append('4:5 Go')
 
                 elif row['Type'] == 'trial2':
                     trialtype.append('go')
-                    odormix.append('6:6')
+                    odormix.append('0.5')
                 elif row['Type'] == 'trial3':
                     trialtype.append('go')
-                    odormix.append('6:6')
+                    odormix.append('0.5')
 
 
 
@@ -280,37 +277,48 @@ class Mouse_data:
         is_correct = []
         is_rewarded = []
         licked = []
+        watered = []
+        puffed = []
 
         for index, row in df.iterrows():
             if row['trialtype'] == 'go':
                 is_rewarded.append(1)
+                puffed.append(0)
                 # if any(x > row['go_odor'][0] and x < row['go_odor'][1] + self.delay for x in row['licking']):
                 if any((x > row['go_odor'][1] and x < (row['go_odor'][1]+ self.delay)) for x in row['licking']):
                 #if any(row['go_odor'][1]<x< (row['go_odor'][1]+ self.delay))
                     is_correct.append(1)
                     licked.append(1)
+                    watered.append(1)
                 elif any((x > row['nogo_odor'][1] and x < (row['nogo_odor'][1]+ self.delay)) for x in row['licking']):
                 #if any(row['go_odor'][1]<x< (row['go_odor'][1]+ self.delay))
                     is_correct.append(1)
                     licked.append(1)
+                    watered.append(1)
                 else:
                     is_correct.append(0)
                     licked.append(0)
+                    watered.append(0)
+                    
             
             
             elif row['trialtype'] == 'no_go':
                 is_rewarded.append(0)
+                watered.append(0)
                 # if any(x > row['nogo_odor'][0] and x < row['nogo_odor'][1] + self.delay for x in row['licking']):
                 if any((x > row['nogo_odor'][1] and x < (row['nogo_odor'][1]+ self.delay)) for x in row['licking']):
                     is_correct.append(0)
                     licked.append(1)
+                    puffed.append(1)
                 elif any((x > row['go_odor'][1] and x < (row['go_odor'][1]+ self.delay)) for x in row['licking']):
                 #if any(row['go_odor'][1]<x< (row['go_odor'][1]+ self.delay))
                     is_correct.append(0)
                     licked.append(1)
+                    puffed.append(1)
                 else:
                     is_correct.append(1)
                     licked.append(0)
+                    puffed.append(0)
 
 
         # for index, row in df.iterrows():
@@ -368,7 +376,7 @@ class Mouse_data:
             elif row['trialtype'] in ['unpred_water', 'close_unpred_water', 'far_unpred_water']:
                 is_rewarded.append(1)
                 is_correct.append(np.nan)
-        d = {'is_Correct': is_correct, 'is_Rewarded': is_rewarded, 'licked' : licked}
+        d = {'is_Correct': is_correct, 'is_Rewarded': is_rewarded, 'licked' : licked, 'watered' : watered, 'puffed' : puffed}
         new_df = pd.DataFrame(d)
         return new_df
 
@@ -402,6 +410,8 @@ class Mouse_data:
         for index, row in df.iterrows():
             if row['trialtype'] in ['go']:
 
+                #lick_valid = [x for x in row['licking'] if x > row['go_odor'][0] and x < row['go_odor'][
+                #    1] + self.delay]
                 lick_valid = [x for x in row['licking'] if x > row['go_odor'][0] and x < row['go_odor'][
                     1] + tol_interval]  # valid licking: after odor on and 5.5 s after odor off
                 # lickingrate for anticipitory period and after water period 3.5 respectively
@@ -433,6 +443,8 @@ class Mouse_data:
                     duration = np.nan
 
             elif row['trialtype'] in ['no_go']:
+                #lick_valid = [x for x in row['licking'] if x > row['go_odor'][0] and x < row['go_odor'][
+                #    1] + self.delay]
                 lick_valid = [x for x in row['licking'] if x > row['nogo_odor'][0] and x < row['nogo_odor'][
                     1] + tol_interval]  # valid licking: after odor on and 5.5 s after odor off
                 # inter-licking interval for anticipitory period and after water period
@@ -548,8 +560,10 @@ if __name__ == '__main__':
     # ********************
     load_path = 'F:/My Drive/behavior data/valence_task_2023_go_no_66'
 
-    mouse_names = ['M3_post_iso']
-    #mouse_names = ['K3_day5','K2_day5','K1_day5']
+    #mouse_names = ['males_last_51', 'males_pre_dark']
+    #mouse_names =['ns_66_dark', 'females_last_51','females_last_54']
+    mouse_names = ['females_pre_dark','males_pre_dark','females_pre_light', 'males_pre_light']
+    #mouse_names = ['males_pre_dark','females_pre_dark']
 
 
 
