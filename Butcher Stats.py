@@ -17,20 +17,26 @@ import sys
 from parse_data_v2_1 import Mouse_data
 from parse_data_v2_1 import pickle_dict
 from parse_data_v2_1 import load_pickleddata
+from datamatrix import io
+from statsmodels.stats.anova import AnovaRM
+
 
 
 #path = '/Volumes/GoogleDrive/My Drive/behavior data/experiment_data_2022_3_odor go_no-go_no_delay/parsed_dataframe_pickle'
-path = 'F:/My Drive/behavior data/valence_task_2023_go_no_66/parsed_dataframe_pickle'
+#path = 'F:/My Drive/behavior data/valence_task_2023_odor go_no-go_no_delay/parsed_dataframe_pickle'
+path='F:/My Drive/behavior data/valence_task_2023_go_no_66/parsed_dataframe_pickle'
+path_excels = 'F:/My Drive/behavior data/valence_task_2023_go_no_66/parsed_dataframe_spreadsheet'
 
 #females = os.path.join(path,'combined_all_clean_G_females.pickle')
 #males = os.path.join(path,'combined_all_clean_G_males.pickle')
 
-g = os.path.join(path,'combined_all_clean_learning.pickle')
+
 
 
 #f = load_pickleddata(females)
 #m = load_pickleddata(males)
-g = load_pickleddata(g)
+
+
 
 
 # event plot with trials and iscorerct data
@@ -56,18 +62,9 @@ g = load_pickleddata(g)
 # social_pre.index.duplicated()
 #f.index.duplicated()
 #m.index.duplicated()
-g.index.duplicated()
 
 
-#y = 'licked'
-#y = 'is_Correct'
-#y= 'rate_odor'
-y='rate_window'
-#y = 'latency_to_odor'
-#x = 'session'
-x = 'odormix'
 
-values = ['', 'day1', 'day2', 'day3', 'day4']
 
 #values= ['','baseline','after_2_weeks']
 #values = ['5*10^-2','5*10^-3','5*10^-4','5*10^-5','5*10^-6']
@@ -80,7 +77,6 @@ values = ['', 'day1', 'day2', 'day3', 'day4']
 # social_post = social_post[(social_post['trialtype'].isin(['go','no_go']))]
 #f = f[(f['trialtype'].isin(['go','no_go']))]
 #m = m[(m['trialtype'].isin(['go','no_go']))]
-g = g[(g['trialtype'].isin(['no_go','go']))]
 # cold_test = post_data[(post_data['dilution'].isin(['6']))]
 
 #data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','phase'])[y].mean().reset_index()
@@ -93,7 +89,16 @@ g = g[(g['trialtype'].isin(['no_go','go']))]
 
 #g = g.groupby(['mouse_name'])[y].mean().reset_index()
 
-g = g.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
+#g[g[:, 2].argsort()]
+
+
+#print(np.shape(g))
+
+#for_prism = pd.DataFrame(g['mouse_name'],g['session'],g['odormix'])
+#for_prism.sort_values(by=['mouse_name'])
+#for_prism.sort_values(by=['mouse_name','session','odormix'])
+
+#print(for_prism)
 #g = g.groupby(['mouse_name','session'])[y].mean().reset_index()
 
 
@@ -124,16 +129,139 @@ g = g.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
 #                                     categories=['8:0 Go','1:8 Go', '2:7 Go', '3:6 Go', '4:5 Go', '5:4 No', '6:3 No', '7:2 No', '8:1 No', '8:0 No'],
 #                                     ordered=True)
 
-g['odormix'] = pd.Categorical(g['odormix'],
-                                    categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '4:5 Go', '6:6', '5:4 No', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
-                                    ordered=True)
+
+
+# g['odormix'] = pd.Categorical(g['odormix'],
+#                                     categories=['1:8 Go', '2:7 Go', '3:6 Go', '6:6', '6:3 No', '7:2 No','8:1 No'],
+#                                     ordered=True)
+
 
 #plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="odormix", ci=68, err_style='bars', legend = True)
 
 #color = (sns.set_palette("bright")
 
 #plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend = True, palette = sns.color_palette('bright', as_cmap=True))
-plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend = True, palette = ['g','r','g','r','r','r'])
+#plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend = True, palette = ['g', 'g', 'purple','purple','r','r'])
+#plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="mouse_name", err_style='bars', errorbar="se", legend = True, palette = ['magenta','orange','purple','b','r'])
+#plot = sns.scatterplot(data = g,x = x,y = y, hue="mouse_name")
+
+
+#dm=io.readpickle(os.path.join(path,'combined_all_clean_learning.pickle'))
+
+# females = os.path.join(path_excels,'females_pre_dark_lick_stat.xlsx')
+# dataframe_fe=pd.read_excel(females)
+
+# males = os.path.join(path_excels,'males_pre_dark_lick_stat.xlsx')
+# dataframe_male = pd.read_excel(males)
+
+
+#plot.set_ylabel(">1 Lick (%)", fontsize = 15)
+#plot.set_ylabel("lick/s", fontsize = 15)
+#plot.set_ylabel("latency (s)", fontsize = 15)
+
+
+#plot.yaxis.set_ticks(np.arange(0, 1.05, 0.1))
+#plot.yaxis.set_ticks(np.arange(0, 7, 1))
+#plot.yaxis.set_ticks(np.arange(0, 3, 0.5))
+
+
+def prism_output(path):
+    #y = 'rate_window'
+    #y= 'licked'
+    y = 'latency_to_odor'
+    pickled_data = os.path.join(path,'combined_all_clean_learning.pickle')
+    pickled_data = load_pickleddata(pickled_data)
+    pickled_data.index.duplicated()
+    pickled_data = pickled_data[(pickled_data['trialtype'].isin(['no_go','go']))]
+    pickled_data = pickled_data.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
+    for_prism=pd.DataFrame(pickled_data)
+    for_prism.sort_values('odormix')
+    saving = path + 'latency.csv'
+    for_prism.to_csv(saving)
+    print(for_prism)
+
+def correct_graph(path):
+    y='is_Correct'
+    pickled_data = os.path.join(path,'combined_all_clean_learning.pickle')
+    pickled_data = load_pickleddata(pickled_data)
+    pickled_data.index.duplicated()
+    pickled_data = pickled_data[(pickled_data['trialtype'].isin(['no_go','go']))]
+    pickled_data = pickled_data.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
+    pickled_data['odormix'] = pd.Categorical(pickled_data['odormix'],
+                                    categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '4:5 Go', '6:6', '5:4 No', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
+                                    ordered=True)
+    x = 'odormix'
+    plot = sns.lineplot(data = pickled_data,x = x,y = y, marker = "o", hue="session",  legend = True, palette = ['g', 'r', 'g','b'])
+    plt.show()
+
+def lick_graph (pickled_data):
+    y = 'licked'
+    x = 'odormix'
+    pickled_data = os.path.join(path,'combined_all_clean_learning.pickle')
+    pickled_data = load_pickleddata(pickled_data)
+    pickled_data.index.duplicated()
+    pickled_data = pickled_data[(pickled_data['trialtype'].isin(['no_go','go']))]
+    pickled_data = pickled_data.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
+    pickled_data['odormix'] = pd.Categorical(pickled_data['odormix'],
+                                    categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '4:5 Go', '6:6', '5:4 No', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
+                                    ordered=True)
+    plot = sns.lineplot(data = pickled_data,x = x,y = y, marker = "o", hue="mouse_name",  legend = True, palette = ['g', 'r', 'b'])
+    plot.set_ylabel(">1 Lick (%)", fontsize = 15)
+    plot.yaxis.set_ticks(np.arange(0, 1.05, 0.1))
+    mpl.rcParams['font.size']=30
+    plt.show()
+
+def rate_graph(pickled_data):
+    #y = 'rate_odor'
+    y='rate_window'
+    x = 'odormix'
+    pickled_data = os.path.join(path,'combined_all_clean_learning.pickle')
+    pickled_data = load_pickleddata(pickled_data)
+    pickled_data.index.duplicated()
+    pickled_data = pickled_data[(pickled_data['trialtype'].isin(['no_go','go']))]
+    pickled_data = pickled_data.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()    
+    pickled_data['odormix'] = pd.Categorical(pickled_data['odormix'],
+                                    categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '4:5 Go', '6:6', '5:4 No', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
+                                    ordered=True)
+    plot = sns.lineplot(data = pickled_data,x = x,y = y, marker = "o", hue="mouse_name",  legend = True, palette = ['g', 'r', 'g'])
+    plot.set_ylabel("lick/s", fontsize = 15)
+    plot.yaxis.set_ticks(np.arange(0, 1.05, 0.1))
+    mpl.rcParams['font.size']=30
+    plt.show()
+
+def latency_graph(pickled_data):
+    y = 'latency_to_odor'
+    x = 'odormix'
+    pickled_data = os.path.join(path,'combined_all_clean_learning.pickle')
+    pickled_data = load_pickleddata(pickled_data)
+    pickled_data.index.duplicated()
+    pickled_data = pickled_data[(pickled_data['trialtype'].isin(['no_go','go']))]
+    pickled_data = pickled_data.groupby(['mouse_name','session','odormix'])[y].mean().reset_index()
+    #pickled_data['odormix'] = pd.Categorical(pickled_data['odormix'],
+                                    #categories=['0:8 Go','1:8 Go', '1:5 Go', '2:7 Go', '3:6 Go', '4:5 Go', '6:6', '5:4 No', '6:3 No', '7:2 No','5:1 No', '8:1 No', '8:0 No'],
+                                    #ordered=True)    
+    plot = sns.lineplot(data = pickled_data,x = x,y = y, marker = "o", hue="mouse_name",  legend = True, palette = sns.color_palette('bright', as_cmap=True))
+    plot.set_ylabel("latency (s)", fontsize = 15)
+    plot.yaxis.set_ticks(np.arange(0, 3, 0.5))
+    mpl.rcParams['font.size']=30
+    plt.show()
+
+
+#lick_graph(path)
+#correct_graph(path)
+#rate_graph(path)
+#latency_graph(path)
+prism_output(path)
+
+
+
+
+
+
+
+
+
+#plot.yaxis.set_ticks(np.arange(0.25, 1.05, 0.05))
 
 
 #plot = sns.lineplot(data = g,x = x,y = y, marker = "o")
@@ -194,9 +322,9 @@ plot = sns.lineplot(data = g,x = x,y = y, marker = "o", hue="session",  legend =
 
 #sns.lineplot(data = data_deg_cond,x = x,y = y, marker="o")
 
-plt.locator_params(axis="x", integer=True, tight=True)
 
-#plot.yaxis.set_ticks(np.arange(0, 1.05, 0.05))
+#plt.locator_params(axis="x", integer=True, tight=True)
+
 
 
 #sns.move_legend(plot, "upper left", bbox_to_anchor=(1, 1))
@@ -205,10 +333,10 @@ plt.locator_params(axis="x", integer=True, tight=True)
 
 #plt.xticks(ticks = x ,labels = values, rotation = 'vertical')
 
-mpl.rcParams['font.size']=30
+
 
 #plt.gca().invert_xaxis()
 
-plt.show()
+#plt.show()
 
 

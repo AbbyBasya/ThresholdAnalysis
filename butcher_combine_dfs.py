@@ -17,8 +17,8 @@ from parse_data_v2_1 import pickle_dict
 from parse_data_v2_1 import load_pickleddata
 
 #mouse_id = ['K3_good','K2_good','K1_good']
-#mouse_id = ['test']
-mouse_id =  ['females_pre_dark','males_pre_dark','females_pre_light', 'males_pre_light']
+mouse_id = ['test']
+#mouse_id =  ['females_pre_dark','males_pre_dark','females_pre_light', 'males_pre_light']
 #mouse_id =['ns_66_dark', 'females_last_51','females_last_54']
 #mouse_id = ['males_last_51', 'males_pre_dark']
 #mouse_id = ['females_pre_dark','males_pre_dark']

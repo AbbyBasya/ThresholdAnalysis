@@ -1,0 +1,8 @@
+# create list of trial types
+# create list of lick/no lick (or reward/punish)
+# bin the lists into chunks
+# for every element in list, if it's a 6:3 for example, then determine if the elements n before it contained an airpuff
+# then compare how many of the 6:3 that had vs  didn't have airpuff n before it resulted in licks
+# start with just 1 before, iterate to 5 before, see  where strongest effect
+# do for females vs males, light vs dark
+

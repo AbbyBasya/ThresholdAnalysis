@@ -29,6 +29,7 @@ class Mouse_data:
         self.trialtypes = []
         self.odormix = []
         self.df_trials_iscorrect = {}
+        self.df_trials_consequence = {}
         self.df_trials_lick = {}
         self.df_eventcode = {}
         self.p_hit = {}
@@ -240,10 +241,10 @@ class Mouse_data:
                 temp_water_off = row['Time'] - start_trials
 
             elif row['Event'] ==666:  # airpuff on
-                temp_water_on = row['Time'] - start_trials
+                temp_airpuff_on = row['Time'] - start_trials
 
             elif row['Event'] == 667:   #airpuff off
-                temp_water_off = row['Time'] - start_trials
+                temp_airpuff_off = row['Time'] - start_trials
 
             elif row['Event'] == 100:  # trial end
                 temp_trial_end = row['Time'] - start_trials
@@ -262,7 +263,7 @@ class Mouse_data:
         return lick, trialtype, odormix, go_odor, nogo_odor, control_odor, water_on, water_off, airpuff_on, airpuff_off, trial_end
 
     def create_trial_iscorrect(
-            self):  # create dataframe with trial number, correct or rewarded or not only for conditioning period
+            self):  # create dataframe with trial number, correct or rewarded etc
         for index, date in enumerate(self.all_days):
             value = self.df_trials[date]
             new_df = self.eval_trials_correct(value)
@@ -319,54 +320,6 @@ class Mouse_data:
                     is_correct.append(1)
                     licked.append(0)
                     puffed.append(0)
-
-
-        # for index, row in df.iterrows():
-            # if row['odormix'] == '1:8 Go'or '2:7 Go' or '3:6 Go':
-            #     is_rewarded.append(1)
-            #     # if any(x > row['go_odor'][0] and x < row['go_odor'][1] + self.delay for x in row['licking']):
-            #     if any(x > row['go_odor'][1] and x < row['go_odor'][1] + self.delay for x in row['licking']):
-            #         is_correct.append(1)
-            #     else:
-            #         is_correct.append(0)
-            #
-            # elif row['odormix'] == '8:1 No' or '7:2 No' or '6:3 No':
-            #     is_rewarded.append(0)
-            #     # if any(x > row['nogo_odor'][0] and x < row['nogo_odor'][1] + self.delay for x in row['licking']):
-            #     if any(x > row['nogo_odor'][1] and x < row['nogo_odor'][1] + self.delay for x in row['licking']):
-            #         is_correct.append(0)
-            #     else:
-            #         is_correct.append(1)
-
-            elif row['trialtype'] == 'go_blank_cheat':
-                is_rewarded.append(1)
-                # if any(x > row['nogo_odor'][0] and x < row['nogo_odor'][1] + self.delay for x in row['licking']):
-                if any(x > row['go_odor'][1] and x < row['go_odor'][1] + self.delay for x in row['licking']):
-                    is_correct.append(1)
-                else:
-                    is_correct.append(0)
-
-            elif row['trialtype'] == 'c_reward':
-                is_rewarded.append(1)
-                if any(x > row['control_odor'][0] and x < row['water_on'] for x in row['licking']):
-                    is_correct.append(1)
-                else:
-                    is_correct.append(0)
-            elif row['trialtype'] == 'c_omit':
-                is_rewarded.append(0)
-                if any(x > row['control_odor'][0] and x < row['control_odor'][1] + 2 * self.delay for x in
-                       row['licking']):
-                    is_correct.append(1)
-                else:
-                    is_correct.append(0)
-
-            elif row['trialtype'] == 'background':
-                is_rewarded.append(0)
-                if any(x > 0 and x < row['trial_end'] for x in row['licking']):
-                    is_correct.append(0)
-                else:
-                    is_correct.append(1)
-
             elif row['trialtype'] == 'go_omit':
                 is_rewarded.append(0)
                 if any(x > row['go_odor'][0] and x < row['go_odor'][1] + self.delay for x in row['licking']):
@@ -380,6 +333,57 @@ class Mouse_data:
         new_df = pd.DataFrame(d)
         return new_df
 
+
+    # either running this on the original df, in which case use licks and airpuff codes
+    # or running on the excel file of is_correct, in which case have to create new class referring to those excels... tricky since tabs in one file?   
+    
+    # def create_consequence_history(
+    #         self):  # create dataframe with trial number, correct or rewarded etc
+    #     for index, date in enumerate(self.all_days):
+    #         value = self.df_trials[date]
+    #         new_df = self.consequence_history(value)
+    #         new_df.insert(0, 'odormix', value['odormix'])
+    #         self.df_trials_consequence[date] = new_df
+    #         print('create_trial_history done!')
+    
+    # def consequence_history(self, df):
+    #     licked_airpuff = []
+    #     no_lick_airpuff = []
+    #     licked_nopuff = []
+    #     no_lick_nopuff = []
+    #     h = 2
+
+
+
+    #             elif any((x > row['nogo_odor'][1] and x < (row['nogo_odor'][1]+ self.delay)) for x in row['licking']):
+    #                 if any x in row ['airpuff_on'] in df.iterrows (row -h):(row-1): 
+        
+        
+        
+    #                 row['airpuff_on']
+        
+        
+        # for index, row in df.iterrows():
+        #     # do it on the dataframe created by is_correct not on the raw trials one
+        #     if ['licked'] == 1:
+        #         if (any(row['puffed'])[(row-h):(row-1)]== 1) is True:
+        #             licked_airpuff.append(1)
+        #         else:
+        #             licked_nopuff.append(1)
+        #     if ['licked'] == 0:
+        #         if (any(row['puffed'])[(row-h):(row-1)]== 1) is True:
+        #             no_lick_airpuff.append(1)
+        #         else:
+        #             no_lick_nopuff.append(1)
+
+        # d = {'licked_airpuff': licked_airpuff,
+        # 'no_lick_airpuff': no_lick_airpuff,
+        # 'licked_nopuff': licked_nopuff,
+        # 'no_lick_nopuff': no_lick_nopuff
+        # }
+        # df_history = pd.DataFrame(d)
+        # return df_history
+    
     def create_trial_lick(self):
         for index, date in enumerate(self.all_days):
             value = self.df_trials[date]
@@ -562,8 +566,9 @@ if __name__ == '__main__':
 
     #mouse_names = ['males_last_51', 'males_pre_dark']
     #mouse_names =['ns_66_dark', 'females_last_51','females_last_54']
-    mouse_names = ['females_pre_dark','males_pre_dark','females_pre_light', 'males_pre_light']
+    #mouse_names = ['females_pre_dark','males_pre_dark','females_pre_light', 'males_pre_light']
     #mouse_names = ['males_pre_dark','females_pre_dark']
+    mouse_names = ['test']
 
 
 
@@ -575,6 +580,7 @@ if __name__ == '__main__':
         cute.create_trials()
         cute.create_trial_iscorrect()
         cute.create_trial_lick()
+        #cute.create_consequence_history()
 
         if is_save:
             # save data by pickle
@@ -593,11 +599,13 @@ if __name__ == '__main__':
             save_to_excel(cute.df_trials_lick, save_path_excel, '{}_lick_stat'.format(cute.mouse_id))
             save_to_excel(cute.df_trials, save_path_excel, '{}_trials'.format(cute.mouse_id))
             save_to_excel(cute.df_eventcode, save_path_excel, '{}_eventcode'.format(cute.mouse_id))
+            #save_to_excel(cute.df_trials_consequence, save_path_excel, '{}_history'.format(cute.mouse_id)) 
         # %% main code
 
 
-
-
+#cute.create_consequence_history(cute.df_trials_iscorrect)
+#save_to_excel(cute.df_trials_consequence, save_path_excel, '{}_history'.format(cute.mouse_id)) 
+ 
 
 
 

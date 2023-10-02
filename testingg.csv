@@ -1,0 +1,57 @@
+,mouse_name,session,odormix,licked
+0,males_pre_dark,2,1:8 Go,0.8928571428571429
+1,males_pre_dark,2,2:7 Go,1.0
+2,males_pre_dark,2,3:6 Go,0.5454545454545454
+3,males_pre_dark,2,6:3 No,0.25806451612903225
+4,males_pre_dark,2,6:6,0.6271186440677966
+5,males_pre_dark,2,7:2 No,0.2857142857142857
+6,males_pre_dark,2,8:1 No,0.06896551724137931
+7,males_pre_dark,3,1:8 Go,0.8571428571428571
+8,males_pre_dark,3,2:7 Go,0.5806451612903226
+9,males_pre_dark,3,3:6 Go,0.56
+10,males_pre_dark,3,6:3 No,0.25
+11,males_pre_dark,3,6:6,0.3620689655172414
+12,males_pre_dark,3,7:2 No,0.24
+13,males_pre_dark,3,8:1 No,0.0
+14,males_pre_dark,4,1:8 Go,0.96
+15,males_pre_dark,4,2:7 Go,0.8484848484848485
+16,males_pre_dark,4,3:6 Go,0.9545454545454546
+17,males_pre_dark,4,6:3 No,0.8421052631578947
+18,males_pre_dark,4,6:6,0.7872340425531915
+19,males_pre_dark,4,7:2 No,0.35
+20,males_pre_dark,4,8:1 No,0.14285714285714285
+21,males_pre_dark,5,1:8 Go,0.8888888888888888
+22,males_pre_dark,5,2:7 Go,0.6875
+23,males_pre_dark,5,3:6 Go,0.5454545454545454
+24,males_pre_dark,5,6:3 No,0.391304347826087
+25,males_pre_dark,5,6:6,0.6
+26,males_pre_dark,5,7:2 No,0.10714285714285714
+27,males_pre_dark,5,8:1 No,0.047619047619047616
+28,males_pre_light,2,1:8 Go,0.9230769230769231
+29,males_pre_light,2,2:7 Go,0.8260869565217391
+30,males_pre_light,2,3:6 Go,0.8947368421052632
+31,males_pre_light,2,6:3 No,0.6956521739130435
+32,males_pre_light,2,6:6,0.8688524590163934
+33,males_pre_light,2,7:2 No,0.1935483870967742
+34,males_pre_light,2,8:1 No,0.15384615384615385
+35,males_pre_light,3,1:8 Go,0.972972972972973
+36,males_pre_light,3,2:7 Go,0.8709677419354839
+37,males_pre_light,3,3:6 Go,0.8125
+38,males_pre_light,3,6:3 No,0.6
+39,males_pre_light,3,6:6,0.8305084745762712
+40,males_pre_light,3,7:2 No,0.39473684210526316
+41,males_pre_light,3,8:1 No,0.15151515151515152
+42,males_pre_light,4,1:8 Go,0.9615384615384616
+43,males_pre_light,4,2:7 Go,0.9
+44,males_pre_light,4,3:6 Go,0.8846153846153846
+45,males_pre_light,4,6:3 No,0.6551724137931034
+46,males_pre_light,4,6:6,0.8867924528301887
+47,males_pre_light,4,7:2 No,0.6428571428571429
+48,males_pre_light,4,8:1 No,0.12
+49,males_pre_light,5,1:8 Go,0.9130434782608695
+50,males_pre_light,5,2:7 Go,1.0
+51,males_pre_light,5,3:6 Go,0.8333333333333334
+52,males_pre_light,5,6:3 No,0.7368421052631579
+53,males_pre_light,5,6:6,0.8571428571428571
+54,males_pre_light,5,7:2 No,0.5
+55,males_pre_light,5,8:1 No,0.05263157894736842
